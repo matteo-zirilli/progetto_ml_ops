@@ -5,7 +5,6 @@ from fastapi.responses import HTMLResponse
 
 #istanzio l'app
 app = FastAPI(title="Sentiment Analysis API")
-def 
 
 #istanzio il modello
 analyzer = SentimentModel()
@@ -13,7 +12,7 @@ analyzer = SentimentModel()
 #definisco la root
 @app.get("/")
 def root():
-    content = """<h1>BENVENUTO AL SISTEMA PER LA VALUTAZIONE DELLA REPUTAZIONE DELLA TUA AZIENDA/
+    content = """<h1>BENVENUTO AL SISTEMA PER LA VALUTAZIONE DELLA REPUTAZIONE DELLA TUA AZIENDA</h1>
                 <a href="/docs">Clicca qui per testare la API</a>"""
     return HTMLResponse(content = content)
 
