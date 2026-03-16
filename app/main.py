@@ -1,13 +1,21 @@
 from app.schemas import SentimentRequest, SentimentResponse
 from app.model import SentimentModel
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 
 #istanzio l'app
 app = FastAPI(title="Sentiment Analysis API")
+def 
 
 #istanzio il modello
 analyzer = SentimentModel()
 
+#definisco la root
+@app.get("/")
+def root():
+    content = """<h1>BENVENUTO AL SISTEMA PER LA VALUTAZIONE DELLA REPUTAZIONE DELLA TUA AZIENDA/
+                <a href="/docs">Clicca qui per testare la API</a>"""
+    return HTMLResponse(content = content)
 
 #poiché devo inviare dei dati al server (un testo) creo un endpoint di post
 @app.post("/predict", response_model = SentimentResponse)
