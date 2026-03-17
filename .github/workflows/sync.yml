@@ -9,16 +9,16 @@ on:
 # 2. COSA DEVE FARE?
 jobs:
   sync-to-hub:
-    runs-on: ubuntu-latest # Gli diamo un computer Linux virtuale su cui lavorare
+    runs-on: ubuntu-latest # Gli do un computer Linux virtuale su cui lavorare
     steps:
-      - uses: actions/checkout@v3 # Scarica il tuo codice da GitHub
+      - uses: actions/checkout@v3 # Scarica il codice da GitHub
         with:
           fetch-depth: 0
           lfs: true
 
       - name: Push to Hugging Face
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }} # Prende la chiave dalla tua cassaforte
+          HF_TOKEN: ${{ secrets.HF_TOKEN }} # Prende la chiave
         run: |
-          git remote add space https://user:$HF_TOKEN@huggingface.co/spaces/TUO_USERNAME_HF/NOME_DEL_TUO_SPACE
+          git remote add space https://user:$HF_TOKEN@huggingface.co/spaces/matteozirilli/sentiment-api-fastapi
           git push --force space main
