@@ -12,7 +12,7 @@ analyzer = SentimentModel()
 #definisco la root
 @app.get("/")
 def root():
-    content = """<h1>BENVENUTO AL SISTEMA PER LA VALUTAZIONE DELLA REPUTAZIONE DELLA TUA AZIENDA</h1>
+    content = """<h1>WELCOME!!Here you can test any text or chat or reviews to classify as Positive, Neutral or Negative</h1>
                 <a href="/docs">Clicca qui per testare la API</a>"""
     return HTMLResponse(content = content)
 

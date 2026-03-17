@@ -6,7 +6,7 @@ on:
     branches: [main]
   workflow_dispatch: # permette di farlo partire anche a mano se serve
 
-# 2. COSA DEVE FARE?
+# scaricare il codice da github
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest # Gli do un computer Linux virtuale su cui lavorare
