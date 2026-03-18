@@ -14,7 +14,7 @@ class SentimentModel():
         Si definisce il metodo costruttore del modello di Sentiment Analysis che salva dentro "model" il modello di Hugging Face ROBERTA
         """
 
-        # Recupero il token dall'ambiente
+        # Recupero il token dall'ambiente perché su Codespace mi dà problemi di lettura su HF, credo dipenda dall'Indirizzo IP su cui mi trovo in Codespace
         hf_token = os.environ.get("HF_TOKEN")
         self.model = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", token =hf_token)
 

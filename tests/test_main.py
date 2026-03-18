@@ -22,3 +22,27 @@ def test_predict_sentiment():
     assert response.status_code == 200, "Errore: la post activity non ha funzionato!"
     assert "label" in data, "Nella risposta non è stata trovata la label"
     assert "score" in data, "Nella risposta non è stata trovata lo score"
+
+
+#eseguo un test sull'input errato
+def test_predict_invalid_input():
+    # Invio un JSON totalmente sbagliato (una chiave inesistente e un numero)
+    bad_payload = {"testo_sbagliato": 12345}
+    response = client.post("/predict", json=bad_payload)
+    
+   
+    #verificato a priori che il tipo di errore per questo genere di test è 422
+    assert response.status_code == 422, "Errore: l'API ha accettato un input non valido!"
+
+
+#eseguo un test su un'utente arrabbiato
+def test_predict_negative_sentiment():
+    # Invio una frase palesemente negativa
+    text = {"text": "This is the worst experience of my life, absolutely terrible."}
+    response = client.post("/predict", json=text)
+    data = response.json()
+    
+    assert response.status_code == 200
+    # Verifico che il modello abbia "capito" che è una frase negativa
+    
+    assert data["label"].lower() == "negative", f"Errore: il modello ha predetto {data['label']} invece di negative"
