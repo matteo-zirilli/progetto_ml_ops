@@ -1,4 +1,5 @@
 from transformers import pipeline
+import os
 
 
 class SentimentModel():
@@ -13,7 +14,9 @@ class SentimentModel():
         Si definisce il metodo costruttore del modello di Sentiment Analysis che salva dentro "model" il modello di Hugging Face ROBERTA
         """
 
-        self.model = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
+        # Recupero il token dall'ambiente
+        hf_token = os.environ.get("HF_TOKEN")
+        self.model = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", token =hf_token)
 
     def predict(self, text: str):
 
