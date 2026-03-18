@@ -3,6 +3,7 @@ from app.model import SentimentModel #importo il modello
 from sklearn.metrics import classification_report, confusion_matrix
 import numpy as np
 import json
+import config as cf
 
 # Scarico il dataset (la variante 'sentiment')
 dataset = load_dataset("tweet_eval", "sentiment")
@@ -20,8 +21,8 @@ print("\n--- PRIMO TWEET  ---")
 print(dataset["test"][0])
 
 
-#prendo un subset del database appena importato, per evitare di andare contro limiti di memoria di Codespace
-subset = dataset["test"].select(range(50))
+#prendo un subset del database appena importato, per evitare di andare contro limiti di memoria di Codespace e mischio il set 
+subset = dataset["test"].shuffle(seed=cf.RANDOM_SEED).select(range(100))
 
 X = list(subset["text"])
 y = np.array(subset["label"])
