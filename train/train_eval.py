@@ -2,6 +2,7 @@ from datasets import load_dataset
 from app.model import SentimentModel #importo il modello
 from sklearn.metrics import classification_report, confusion_matrix
 import numpy as np
+import json
 
 # Scarico il dataset (la variante 'sentiment')
 dataset = load_dataset("tweet_eval", "sentiment")
@@ -22,23 +23,54 @@ print(dataset["test"][0])
 #prendo un subset del database appena importato, per evitare di andare contro limiti di memoria di Codespace
 subset = dataset["test"].select(range(50))
 
-X = subset["text"]
+X = list(subset["text"])
 y = np.array(subset["label"])
 
 
 #istanzio il modello
 model = SentimentModel()
-raw_predictions = model.predict(X)
+
+#salvo dentro la lista le mie predizioni tenendo a mente che il modello accetta solo singole stringhe
+raw_predictions =[model.predict(x) for x in X]
 #poiché nel modello Roberta le label sono negative, neutral e positive li rimappo in 0,1,2 come da dataset appena importato
 label_mapping = {"negative": 0, "neutral": 1, "positive": 2}
 
 
 y_pred = np.array([label_mapping[pred["label"].lower()] for pred in raw_predictions])
 
-# La magia di Scikit-Learn! Ora hai due array perfetti.
-print("\n--- REPORT DI CLASSIFICAZIONE ---")
-print(classification_report(y, y_pred))
-
 print("\n--- MATRICE DI CONFUSIONE ---")
 print(confusion_matrix(y, y_pred))
 
+
+
+print("\n--- MATRICE DI CONFUSIONE ---")
+print(classification_report(y, y_pred))
+
+
+#salvo le metriche che mi interessano per il progetto
+#il progetto richiede per l'azienda il monitoraggio dei feedback degli utenti
+#quindi l'azienda sarà più sensibile ai feedback negativi piuttosto che quelli positivi
+#ovvero se un feedback è negativo l'azienda deve attenzionare quello che è il suo operato
+#di conseguenza ritengo che sia meglio ottimizzare nel modello la Recall sui Negativi e in generale anche F1-score
+#questo perché è meglio considerare qualche feedback negativo, investigarsi e rendersi conto che in realtà era un feedback positivo piuttosto che il contrario
+
+
+#salvo il report in un dizionario
+report_dict= classification_report(y, y_pred, output_dict=True)
+
+recall_neg_val = report_dict["0"]["recall"]
+f1_macro_val = report_dict["macro avg"]["f1-score"]
+
+
+metrics_to_save = {
+
+    "negative_recall":recall_neg_val,
+    "macro_f1": f1_macro_val
+
+}
+
+
+
+with open("metrics.json","w") as f:
+
+    json.dump(metrics_to_save, f, indent = 4)
