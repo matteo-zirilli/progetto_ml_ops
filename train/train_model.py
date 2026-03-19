@@ -1,20 +1,20 @@
 from datasets import load_dataset
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer, DataCollatorWithPadding
 import os
 import config as cf
 
+#token di lettura da HF per autenticazione
 hf_token = os.environ.get("HF_TOKEN")
 tokenizer = AutoTokenizer.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest", token =hf_token)
 
 
 
-
+#FASE DI TOKENIZZAZIONE TWEETS
 def tokenize_function(examples):
     
-    # Il tokenizer prende in input il testo e i due parametri di per eseguire il padding e avere vettori di dimensione uguali, e se è un testo è troppo lungo rispetto ai limiti del modello HF tronca
+    # Il tokenizer prende in input il testo,  se è un testo è troppo lungo rispetto ai limiti del modello HF tronca
     results = tokenizer(
         examples["text"], 
-        padding="max_length", 
         truncation=True
     )
     
@@ -23,15 +23,15 @@ def tokenize_function(examples):
 
 
 
-
+#scarico il dataset dalla libreria di HF
 dataset = load_dataset("tweet_eval", "sentiment")
 
-
-subset = dataset["train"].shuffle(seed=cf.RANDOM_SEED).select(range(100))
+#seleziono un subset di 500 righe dal train
+subset = dataset["train"].shuffle(seed=cf.RANDOM_SEED).select(range(500))
 #salto il preprocessing qui perché eseguito su notebook di Colab
 
 
-
+#tokenizzo il subset e credo il dizionario
 subset_tokenized = subset.map(
     tokenize_function, 
     batched=True
@@ -39,7 +39,26 @@ subset_tokenized = subset.map(
 
 
 
-print(subset_tokenized.column_names)
 
 
 
+#FASE DI TRAINING
+
+#scarico il modello di rete neurale pre addestrato da HF con AutoModelForSequenceClassification
+
+model = AutoModelForSequenceClassification.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest", num_labels = 3,token =hf_token)
+
+# definisco le regole di addestramento (epoche, batch size)
+
+training_args = TrainingArguments(output_dir = "./models/model_fine_tuned", num_train_epochs = 2, per_device_train_batch_size = 10)
+
+#per far si che il trainer prenda batch di tweet tokenizzati esattamente con la stessa dimensione istanzio la seguente classe
+
+data_collator = DataCollatorWithPadding(tokenizer = tokenizer)
+
+#sfrutto la classe Trainer per addestrare la rete passandogli il modello dati "tokenizzati" con le regole definite
+#istanzio la classe Trainer con gli argomenti definiti finora
+trainer = Trainer(model = model, args = training_args, train_dataset = subset_tokenized, data_collator= data_collator)
+#eseguo il train
+trainer.train()
+trainer.save_model(output_dir = "./models/model_fine_tuned")

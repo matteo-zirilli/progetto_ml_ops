@@ -22,7 +22,7 @@ print(dataset["test"][0])
 
 
 #prendo un subset del database appena importato, per evitare di andare contro limiti di memoria di Codespace e mischio il set 
-subset = dataset["test"].shuffle(seed=cf.RANDOM_SEED).select(range(100))
+subset = dataset["test"].shuffle(seed=cf.RANDOM_SEED).select(range(500))
 
 X = list(subset["text"])
 y = np.array(subset["label"])
