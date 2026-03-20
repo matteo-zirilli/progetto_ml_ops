@@ -1,3 +1,6 @@
+import operator as o #mi serve per le soglie che definisco sotto
+
+
 #definisco un seme per la riproducibilità
 RANDOM_SEED = 42
 
@@ -24,7 +27,8 @@ metadata = {
     "model": {
 
         "model_baseline": "cardiffnlp/twitter-roberta-base-sentiment-latest", #modello baseline
-        "model_finetuned": "./models/model_fine_tuned" # cartella dove si trova il modello fine-tuned
+        "model_finetuned": "./models/model_fine_tuned", # cartella dove si trova il modello fine-tuned
+        "model_production" = "./models/production_model"
     },
 
     "classification_metrics":{              #metriche che voglio misurare nel modello
@@ -34,9 +38,13 @@ metadata = {
         "class_2": "macro avg",
         "metric_2": "f1-score"
 
+    }
 
+}
 
-    },
-
-    ###########################################SOGLIE PER CICD#############################################
+###########################################SOGLIE PER CICD#############################################
+#baso le soglie in base alle metriche scelte sopra
+thresholds = {
+    f"{metadata['classification_metrics']['class_1']}_{metadata['classification_metrics']['metric_1']}":{"value":0.8, "operator":o.ge},
+    f"{metadata['classification_metrics']['class_2']}_{metadata['classification_metrics']['metric_2']}":{"value":0.7, "operator":o.ge}
 }

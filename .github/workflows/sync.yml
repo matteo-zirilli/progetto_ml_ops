@@ -1,24 +1,68 @@
-name: Sync to Hugging Face Space
+name: MLOps Pipeline
 
-# L'action parte sul push nel main
 on:
   push:
     branches: [main]
-  workflow_dispatch: # permette di farlo partire anche a mano se serve
+  workflow_dispatch:
 
-# scaricare il codice da github
 jobs:
-  sync-to-hub:
-    runs-on: ubuntu-latest # Gli do un computer Linux virtuale su cui lavorare
+  build-and-test:
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3 # Scarica il codice da GitHub
+      # Scarico il codice da Github
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true #scarica i pesi del modello
+          lfs: true
 
+      # Preparo Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Installo le librerie 
+      - name: Install requirements
+        run: |
+          pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+
+      # Eseguo gli script di ML in ordine
+      - name: Run ML Pipeline
+        run: |
+          python train/train_model.py
+          python train/eval_baseline.py
+          python train/eval_finetuned.py
+
+      # Eseguo il confronto fra i modelli
+      - name: Run Gate Check
+        run: |
+          python gate_check.py
+
+
+
+      # Preparazione del modello vincitore
+      - name: Prepare Production Model
+        run: |
+          # Leggo chi ha vinto
+          WINNER=$(cat winner.txt)
+          echo "Il vincitore decretato dal gate è: $WINNER"
+
+          
+      # Push verso Hugging Face
       - name: Push to Hugging Face
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }} # Prende la chiave
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
+          # Diciamo a git chi siamo
+          git config --global user.email "bot@github.actions"
+          git config --global user.name "GitHub Actions"
+          
+          # Aggiungiamo tutto (compreso il nuovo winner.txt e il modello finetuned)
+          git add .
+          git commit -m "Deploy automatico. Vincitore: $(cat winner.txt)"
+          
+          # Aggiungiamo il remote del tuo Space e forziamo il push
           git remote add space https://user:$HF_TOKEN@huggingface.co/spaces/matteozirilli/sentiment-api-fastapi
           git push --force space main
