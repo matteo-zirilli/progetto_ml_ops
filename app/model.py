@@ -9,7 +9,7 @@ class SentimentModel():
     Classe per definire dato un testo un analisi sentiment in base al testo ricevuto in input
     """
 
-    def __init__(self):
+    def __init__(self, model_path: str):
 
         """
         Si definisce il metodo costruttore del modello di Sentiment Analysis che salva dentro "model" il modello di Hugging Face ROBERTA
@@ -17,7 +17,7 @@ class SentimentModel():
 
         # Recupero il token dall'ambiente perché su Codespace mi dà problemi di lettura su HF, credo dipenda dall'Indirizzo IP su cui mi trovo in Codespace
         hf_token = os.environ.get("HF_TOKEN")
-        self.model = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", token =hf_token)
+        self.model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path,token =hf_token)
 
     def predict(self, text: str):
 

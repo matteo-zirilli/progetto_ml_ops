@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 app = FastAPI(title="Sentiment Analysis API")
 
 #istanzio il modello
-analyzer = SentimentModel()
+analyzer = SentimentModel("cardiffnlp/twitter-roberta-base-sentiment-latest")
 
 #definisco la root
 @app.get("/")

@@ -27,7 +27,7 @@ def tokenize_function(examples):
 dataset = load_dataset("tweet_eval", "sentiment")
 
 #seleziono un subset di 500 righe dal train
-subset = dataset["train"].shuffle(seed=cf.RANDOM_SEED).select(range(500))
+subset = dataset["train"].shuffle(seed=cf.RANDOM_SEED).select(range(5000))
 #salto il preprocessing qui perché eseguito su notebook di Colab
 
 
@@ -50,7 +50,11 @@ model = AutoModelForSequenceClassification.from_pretrained("cardiffnlp/twitter-r
 
 # definisco le regole di addestramento (epoche, batch size)
 
-training_args = TrainingArguments(output_dir = "./models/model_fine_tuned", num_train_epochs = 2, per_device_train_batch_size = 10)
+training_args = TrainingArguments(  output_dir = "./models/model_fine_tuned", 
+                                    num_train_epochs = 2, 
+                                    per_device_train_batch_size = 10,
+                                    learning_rate=2e-5,
+                                    weight_decay=0.01)
 
 #per far si che il trainer prenda batch di tweet tokenizzati esattamente con la stessa dimensione istanzio la seguente classe
 
