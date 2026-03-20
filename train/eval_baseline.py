@@ -2,15 +2,22 @@ from app.model import SentimentModel #importo il modello
 import json
 from train.load_database import import_dataset
 from train.eval_utils import report_model_evaluation
+import config as cf
 
 
-#importo il dataset tweet_eval, categoria "sentiment", subset di "test"
+#importo i metadati da config
 
-X, y = import_dataset("tweet_eval", "test", "sentiment")
+dataset = cf.metadata["dataset_id"]
+split = cf.metadata["splits"]["test_split"]
+config_name = cf.metadata["config_name"]
+model_baseline = cf.metadata["model_baseline"]
+
+
+X, y = import_dataset(dataset, split, config_name)
 
 
 #istanzio il modello
-model = SentimentModel("cardiffnlp/twitter-roberta-base-sentiment-latest")
+model = SentimentModel(model_baseline)
 
 #eseguo la valutazione del modello
 

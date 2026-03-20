@@ -2,9 +2,20 @@ from app.model import SentimentModel #importo il modello
 import json
 from train.load_database import import_dataset
 from train.eval_utils import report_model_evaluation
+import config as cf
+
+
+
+
+#importo i metadati da config
+
+dataset = cf.metadata["dataset_id"]
+split = cf.metadata["splits"]["test_split"]
+config_name = cf.metadata["config_name"]
+model_finetuned = cf.metadata["model_finetuned"]
 
 #valuto il modello re-trained per vedere se ancora risponde bene a frasi in input
-model = SentimentModel("./models/model_fine_tuned")
+model = SentimentModel(model_finetuned)
 
 #pipeline("text-classification", model="./models/model_fine_tuned", tokenizer = "./models/model_fine_tuned")
 
@@ -22,7 +33,7 @@ print(model.predict(text_for_test))
 
 #importo il dataset tweet_eval, categoria "sentiment", subset di "test"
 
-X,y = import_dataset("tweet_eval", "test", "sentiment")
+X,y = import_dataset(dataset, split, config_name)
 
 #istanzio il modello
 

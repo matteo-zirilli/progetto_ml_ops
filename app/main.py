@@ -2,12 +2,19 @@ from app.schemas import SentimentRequest, SentimentResponse
 from app.model import SentimentModel
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+import config as cf
 
 #istanzio l'app
 app = FastAPI(title="Sentiment Analysis API")
 
+
+#importo i metadati da config
+model = cf.metadata["model"]["model_baseline"]
+
+
+
 #istanzio il modello
-analyzer = SentimentModel("cardiffnlp/twitter-roberta-base-sentiment-latest")
+analyzer = SentimentModel(model)
 
 #definisco la root
 @app.get("/")

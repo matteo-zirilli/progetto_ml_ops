@@ -1,5 +1,6 @@
 from sklearn.metrics import classification_report, confusion_matrix
 import numpy as np
+import config as cf
 
 
 
@@ -11,10 +12,11 @@ def report_model_evaluation(model, y, X):
     #salvo dentro la lista le mie predizioni tenendo a mente che il modello accetta solo singole stringhe
     raw_predictions =[model.predict(x) for x in X]
     #poiché nel modello Roberta e in quello Re-trained le label sono negative, neutral e positive li rimappo in 0,1,2 come da dataset appena importato
-    label_mapping = {"negative": 0, "neutral": 1, "positive": 2}
+    label_mapping = cf.metadata["label_encoding"]
+    label = cf.metadata["column_mapping"]["label_feature"]
 
 
-    y_pred = np.array([label_mapping[pred["label"].lower()] for pred in raw_predictions])
+    y_pred = np.array([label_mapping[pred[label].lower()] for pred in raw_predictions])
 
     print("\n--- MATRICE DI CONFUSIONE ---")
     print(confusion_matrix(y, y_pred))
