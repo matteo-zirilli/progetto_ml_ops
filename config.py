@@ -28,7 +28,7 @@ metadata = {
 
         "model_baseline": "cardiffnlp/twitter-roberta-base-sentiment-latest", #modello baseline
         "model_finetuned": "./models/model_fine_tuned", # cartella dove si trova il modello fine-tuned
-        "model_production" = "./models/production_model"
+        "model_production": "./models/production_model"
     },
 
     "classification_metrics":{              #metriche che voglio misurare nel modello
