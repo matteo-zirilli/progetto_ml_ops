@@ -10,7 +10,7 @@ import config as cf
 dataset = cf.metadata["dataset_id"]
 split = cf.metadata["splits"]["test_split"]
 config_name = cf.metadata["config_name"]
-model_baseline = cf.metadata["model_baseline"]
+model_baseline = cf.metadata["model"]["model_baseline"]
 
 
 X, y = import_dataset(dataset, split, config_name)

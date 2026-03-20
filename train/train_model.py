@@ -3,9 +3,20 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trai
 import os
 import config as cf
 
+
+#importo i metadati da config
+
+dataset_name = cf.metadata["dataset_id"]
+split = cf.metadata["splits"]["train_split"]
+config_name = cf.metadata["config_name"]
+model_baseline = cf.metadata["model"]["model_baseline"]
+model_finetuned= cf.metadata["model"]["model_finetuned"]
+column_mapping = cf.metadata["column_mapping"]["text_feature"]
+num_labels = len(cf.metadata["label_encoding"])
+
 #token di lettura da HF per autenticazione
 hf_token = os.environ.get("HF_TOKEN")
-tokenizer = AutoTokenizer.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest", token =hf_token)
+tokenizer = AutoTokenizer.from_pretrained(model_baseline, token =hf_token)
 
 
 
@@ -14,7 +25,7 @@ def tokenize_function(examples):
     
     # Il tokenizer prende in input il testo,  se è un testo è troppo lungo rispetto ai limiti del modello HF tronca
     results = tokenizer(
-        examples["text"], 
+        examples[column_mapping], 
         truncation=True
     )
     
@@ -24,10 +35,10 @@ def tokenize_function(examples):
 
 
 #scarico il dataset dalla libreria di HF
-dataset = load_dataset("tweet_eval", "sentiment")
+dataset = load_dataset(dataset_name, config_name)
 
 #seleziono un subset di 500 righe dal train
-subset = dataset["train"].shuffle(seed=cf.RANDOM_SEED).select(range(5000))
+subset = dataset[split].shuffle(seed=cf.RANDOM_SEED).select(range(5000))
 #salto il preprocessing qui perché eseguito su notebook di Colab
 
 
@@ -46,11 +57,11 @@ subset_tokenized = subset.map(
 
 #scarico il modello di rete neurale pre addestrato da HF con AutoModelForSequenceClassification
 
-model = AutoModelForSequenceClassification.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest", num_labels = 3,token =hf_token)
+model = AutoModelForSequenceClassification.from_pretrained(model_baseline, num_labels = num_labels,token =hf_token)
 
 # definisco le regole di addestramento (epoche, batch size)
 
-training_args = TrainingArguments(  output_dir = "./models/model_fine_tuned", 
+training_args = TrainingArguments(  output_dir = model_finetuned, 
                                     num_train_epochs = 2, 
                                     per_device_train_batch_size = 10,
                                     learning_rate=2e-5,
@@ -62,7 +73,11 @@ data_collator = DataCollatorWithPadding(tokenizer = tokenizer)
 
 #sfrutto la classe Trainer per addestrare la rete passandogli il modello dati "tokenizzati" con le regole definite
 #istanzio la classe Trainer con gli argomenti definiti finora
-trainer = Trainer(model = model, args = training_args, train_dataset = subset_tokenized, data_collator= data_collator)
+trainer = Trainer(  model = model, 
+                    args = training_args, 
+                    train_dataset = subset_tokenized, 
+                    data_collator= data_collator, 
+                    processing_class = tokenizer)
 #eseguo il train
 trainer.train()
-trainer.save_model(output_dir = "./models/model_fine_tuned")
+trainer.save_model(output_dir = model_finetuned)

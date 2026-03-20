@@ -13,10 +13,10 @@ def report_model_evaluation(model, y, X):
     raw_predictions =[model.predict(x) for x in X]
     #poiché nel modello Roberta e in quello Re-trained le label sono negative, neutral e positive li rimappo in 0,1,2 come da dataset appena importato
     label_mapping = cf.metadata["label_encoding"]
-    label = cf.metadata["column_mapping"]["label_feature"]
+ 
 
 
-    y_pred = np.array([label_mapping[pred[label].lower()] for pred in raw_predictions])
+    y_pred = np.array([label_mapping[pred["label"].lower()] for pred in raw_predictions])
 
     print("\n--- MATRICE DI CONFUSIONE ---")
     print(confusion_matrix(y, y_pred))
@@ -38,14 +38,22 @@ def report_model_evaluation(model, y, X):
     #salvo il report in un dizionario
     report_dict= classification_report(y, y_pred, output_dict=True)
 
-    recall_neg_val = report_dict["0"]["recall"]
-    f1_macro_val = report_dict["macro avg"]["f1-score"]
+    #recupero da config le metriche che voglio monitorare e salvare
+    class_1 = cf.metadata["classification_metrics"]["class_1"]
+    label_encoding = cf.metadata["label_encoding"]
+    index_label = label_encoding[class_1]
+    metric_1 = cf.metadata["classification_metrics"]["metric_1"]
+    class_2 = cf.metadata["classification_metrics"]["class_2"]
+    metric_2 = cf.metadata["classification_metrics"]["metric_2"]
+
+    metric_val_1 = report_dict[f"{index_label}"][metric_1]
+    metric_val_2 = report_dict[class_2][metric_2]
 
 
     metrics_to_save = {
 
-        "negative_recall":recall_neg_val,
-        "macro_f1": f1_macro_val
+        f"{class_1}_{metric_1}":metric_val_1,
+        f"{class_2}_{metric_2}": metric_val_2
 
     }
 

@@ -4,6 +4,7 @@ RANDOM_SEED = 42
 #definisco i metadati su cui lavorerà il modello
 metadata = {
 
+    ###########################################CONFIGURAZIONE DATASET PUBBLICO#############################################
     "dataset_id": "tweet_eval", #nome del dataset
     "config_name": "sentiment", #categoria o configurazione del dataset
     "splits": {
@@ -19,9 +20,23 @@ metadata = {
 
     "label_encoding": {"negative": 0, "neutral": 1, "positive": 2},
 
+    ###########################################MODELLO BASELINE E FINE-TUNED#############################################
     "model": {
 
         "model_baseline": "cardiffnlp/twitter-roberta-base-sentiment-latest", #modello baseline
         "model_finetuned": "./models/model_fine_tuned" # cartella dove si trova il modello fine-tuned
-    }
+    },
+
+    "classification_metrics":{              #metriche che voglio misurare nel modello
+
+        "class_1": "negative", #qui indico le classi e le metriche che voglio monitorare
+        "metric_1": "recall",
+        "class_2": "macro avg",
+        "metric_2": "f1-score"
+
+
+
+    },
+
+    ###########################################SOGLIE PER CICD#############################################
 }

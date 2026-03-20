@@ -9,12 +9,12 @@ app = FastAPI(title="Sentiment Analysis API")
 
 
 #importo i metadati da config
-model = cf.metadata["model"]["model_baseline"]
+model_path = cf.metadata["model"]["model_baseline"]
 
 
 
 #istanzio il modello
-analyzer = SentimentModel(model)
+analyzer = SentimentModel(model_path)
 
 #definisco la root
 @app.get("/")
