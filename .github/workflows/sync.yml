@@ -31,9 +31,9 @@ jobs:
       # Eseguo gli script di ML in ordine
       - name: Run ML Pipeline
         run: |
-          python train/train_model.py
-          python train/eval_baseline.py
-          python train/eval_finetuned.py
+          python -m train.train_model
+          python -m train.eval_baseline
+          python -m train.eval_finetuned
 
       # Eseguo il confronto fra i modelli
       - name: Run Gate Check
