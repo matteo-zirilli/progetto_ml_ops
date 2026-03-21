@@ -67,6 +67,8 @@ jobs:
           
           # Aggiungo tutto (compreso il nuovo winner.txt e il modello finetuned)
           git add .
+
+          git add -f models/ || true #aggiungo questo comando perché la cartella "models" è nel file gitignore e non la porto su Github perché è pesante, tuttavia mi serve nel funzionamento dell'app quindi deve arrivare su HF, quindi la forzo.
           git commit -m "Deploy automatico. Vincitore: $(cat winner.txt)"
           
           # Aggiungo il remote al mio Space e forzo il push
