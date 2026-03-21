@@ -25,7 +25,7 @@ COPY ./models ./models
 COPY ./app ./app
 
 #l'app comunicherà sulla porta 7860, la porta dove HF ascolta
-EXPOSE 7860
+EXPOSE 8000
 
 #lancio uvicorn e la mia app
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
