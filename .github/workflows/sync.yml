@@ -64,6 +64,20 @@ jobs:
           # Autenticazione su Git
           git config --global user.email "bot@github.actions"
           git config --global user.name "GitHub Actions"
+
+
+
+          # Cancello i checkpoint inutili e pesanti perché altrimenti non riesco a fare il push su HF per lo spazio limitato
+            rm -rf models/model_fine_tuned/checkpoint-* || true
+            
+            # Attivo la gestione dei file giganti con git lfs
+            git lfs install
+            git lfs track "*.safetensors"
+            git lfs track "*.bin"
+            git lfs track "*.pt"
+            git add .gitattributes
+
+
           
           # Aggiungo tutto (compreso il nuovo winner.txt e il modello finetuned)
           git add .
