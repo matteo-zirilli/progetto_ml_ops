@@ -3,11 +3,33 @@ from app.model import SentimentModel
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 import config as cf
-import os
+import 
+from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import Counter, Histogram
 #istanzio l'app
 app = FastAPI(title="Sentiment Analysis API")
 
 
+
+#############################################METRICHE PER IL MONITORAGGIO###########################
+# Contatore: Quante volte il modello ha predetto "positive" o "negative"?
+PREDICTION_COUNTER = Counter(
+    "model_predictions_total", 
+    "Numero di predizioni effettuate per ogni classe", 
+    ["label"]
+)
+
+# Verifico quanto è sicuro il modello delle sue risposte
+CONFIDENCE_SCORE = Histogram(
+    "model_confidence_score", 
+    "Distribuzione del score di confidenza del modello"
+)
+
+
+
+
+
+###############################################CONSIDERAZIONI SU CICD#######################################
 # Controllo se la CI/CD  ha creato il file winner.txt
 if os.path.exists("winner.txt"):
     with open("winner.txt", "r") as f:
@@ -23,7 +45,12 @@ else:
     # Prendo la stringa di Hugging Face dal config
     model_path = cf.metadata["model"]["model_baseline"]
 
-# 3. Istanziamo il modello come facevi già
+
+
+
+
+######################################################MODELLO E ENDPOINTS########################################
+# Istanzio il modello
 analyzer = SentimentModel(model_path)
 
 #definisco la root
@@ -40,7 +67,18 @@ def root():
 def analyze_sentiment(request: SentimentRequest):
 
     try:
-        result = analyzer.predict(request.text)
+        result = analyzer.predict(request.text) #il modello fa la predizione
+
+        # Estraggo i valori per le metriche
+        label_predetta = result["label"]
+        score_predetto = result["score"]
+
+        PREDICTION_COUNTER.labels(label=label_predetta).inc() # Aggiunge +1 alla classe predetta
+        CONFIDENCE_SCORE.observe(score_predetto)             # Registra la sicurezza del modello
         return result
     except ValueError as e:
         raise HTTPException(status_code = 400, detail = str(e))
+
+
+###########################################ATTIVAZIONE APP METRICHE DI MONITORAGGIO#####################################
+Instrumentator().instrument(app).expose(app)

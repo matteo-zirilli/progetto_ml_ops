@@ -8,3 +8,5 @@ pytest
 datasets
 scikit-learn
 accelerate
+prometheus-fastapi-instrumentator
+prometheus-client
