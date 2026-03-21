@@ -3,7 +3,6 @@ from app.model import SentimentModel
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 import config as cf
-import 
 from prometheus_fastapi_instrumentator import Instrumentator
 from prometheus_client import Counter, Histogram
 #istanzio l'app
