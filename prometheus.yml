@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 15s # Legge i dati ogni 15 secondi
+
+scrape_configs:
+  - job_name: 'sentiment_api_produzione'
+    scheme: https
+    metrics_path: '/metrics'
+    static_configs:
+      # L'URL della API su Hugging Face!
+      - targets: ['matteozirilli-sentiment-api-fastapi.hf.space']
