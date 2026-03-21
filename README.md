@@ -3,6 +3,7 @@ title: Sentiment Analysis API
 colorFrom: blue
 colorTo: green
 sdk: docker
+app_port: 7860
 pinned: false
 ---
 
@@ -43,7 +44,7 @@ I pilastri del progetto sono:
 3. L'API va online esponendo Swagger UI e l'endpoint Prometheus.
 
 
-## ⚖️ Logica del Gate Check (Promozione del Modello)
+## Logica del Gate Check
 
 Il cuore decisionale della pipeline CI/CD è il **Gate Check** (`gate_check.py`), un passaggio automatizzato che agisce da "giudice" e garantisce che in produzione finisca sempre e solo un modello affidabile, bloccando eventuali regressioni o addestramenti falliti.
 
@@ -52,10 +53,10 @@ Il confronto avviene valutando specifiche metriche di performance (es. *Recall* 
 1. **Soglia Minima Assoluta:** Il modello Fine-Tuned deve superare un punteggio minimo di decenza qualitativa preimpostato (es. Recall >= 0.80). Se non raggiunge questo livello base di affidabilità, viene scartato a prescindere.
 2. **Vittoria sulla Baseline:** Il modello Fine-Tuned viene confrontato testa a testa con il modello Baseline pre-addestrato originale. Viene promosso solo se le sue metriche sono strettamente superiori a quelle della Baseline.
 
-**Gestione del Fallback (Sicurezza):**
+**Gestione del Fallback:**
 Se il modello Fine-Tuned fallisce anche solo uno dei criteri (come spesso accade durante i test con pochi dati), il Gate Check dichiara vincitrice la **Baseline**. La pipeline non si interrompe con un errore, ma procede al deploy caricando i pesi sicuri e robusti del modello originale, evitando disservizi agli utenti finali.
 
-🛠️ **Configurazione Flessibile (`config.py`):**
+**Configurazione Flessibile (`config.py`):**
 Per mantenere l'architettura pulita e scalabile, **nessun valore di soglia è hardcoded negli script**. Sia la metrica di riferimento da utilizzare per il confronto, sia i valori esatti delle soglie di sbarramento, sono centralizzati e facilmente modificabili all'interno del file `config.py`. Basterà cambiare una variabile in quel file per rendere le regole di validazione più flessibili o più restrittive.
 
 ## Monitoraggio in Produzione (Grafana)
