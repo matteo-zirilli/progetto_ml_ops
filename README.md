@@ -1,3 +1,13 @@
+---
+title: Sentiment Analysis API
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
+
+
+
 # MLOps Sentiment Analysis API
 
 Questo progetto implementa una pipeline MLOps completa (End-to-End) per l'addestramento, la valutazione automatica, il deploy e il monitoraggio di un modello di Sentiment Analysis (RoBERTa).
