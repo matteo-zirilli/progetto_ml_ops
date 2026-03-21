@@ -40,6 +40,12 @@ jobs:
         run: |
           python gate_check.py
 
+      - name: Run API Test
+        env:
+          PYTHONPATH: .
+        run: |
+          pytest tests/test_main.py
+
 
 
       # Preparazione del modello vincitore
@@ -55,14 +61,14 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Diciamo a git chi siamo
+          # Autenticazione su Git
           git config --global user.email "bot@github.actions"
           git config --global user.name "GitHub Actions"
           
-          # Aggiungiamo tutto (compreso il nuovo winner.txt e il modello finetuned)
+          # Aggiungo tutto (compreso il nuovo winner.txt e il modello finetuned)
           git add .
           git commit -m "Deploy automatico. Vincitore: $(cat winner.txt)"
           
-          # Aggiungiamo il remote del tuo Space e forziamo il push
+          # Aggiungo il remote al mio Space e forzo il push
           git remote add space https://user:$HF_TOKEN@huggingface.co/spaces/matteozirilli/sentiment-api-fastapi
           git push --force space main

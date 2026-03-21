@@ -62,10 +62,11 @@ model = AutoModelForSequenceClassification.from_pretrained(model_baseline, num_l
 # definisco le regole di addestramento (epoche, batch size)
 
 training_args = TrainingArguments(  output_dir = model_finetuned, 
-                                    num_train_epochs = 2, 
+                                    num_train_epochs = 1, 
                                     per_device_train_batch_size = 10,
                                     learning_rate=2e-5,
-                                    weight_decay=0.01)
+                                    weight_decay=0.01,
+                                    max_steps = 10)
 
 #per far si che il trainer prenda batch di tweet tokenizzati esattamente con la stessa dimensione istanzio la seguente classe
 

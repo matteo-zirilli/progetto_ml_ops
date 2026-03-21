@@ -20,7 +20,7 @@ def import_dataset(dataset_name:str,data_subset: str, category: str):
 
 
     #prendo un subset del database appena importato, per evitare di andare contro limiti di memoria di Codespace e mischio il set 
-    subset = dataset[data_subset].shuffle(seed=cf.RANDOM_SEED).select(range(500))
+    subset = dataset[data_subset].shuffle(seed=cf.RANDOM_SEED).select(range(100))
 
     X = list(subset[cf.metadata["column_mapping"]["text_feature"]])
     y = np.array(subset[cf.metadata["column_mapping"]["label_feature"]])
