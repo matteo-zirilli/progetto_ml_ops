@@ -11,11 +11,21 @@ COPY requirements.txt .
 # Dico al container di eseguire l'installazione da terminale delle librerie
 RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
+# Copio il file di configurazione
+COPY config.py .
+
+# Copio il file winner (uso l'asterisco così se per caso in locale non esiste, Docker non va in errore!)
+COPY winner.txt* .
+
+# Copio la cartella dei modelli (dove ci sarà il finetuned scaricato dalla CI/CD)
+COPY ./models ./models
+
+
 # copio la cartella "app" dentro una cartella "app" del container.
 COPY ./app ./app
 
-#l'app comunicherà sulla porta 8000.
-EXPOSE 8000
+#l'app comunicherà sulla porta 7860, la porta dove HF ascolta
+EXPOSE 7860
 
 #lancio uvicorn e la mia app
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
