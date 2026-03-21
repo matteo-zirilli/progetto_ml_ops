@@ -8,7 +8,7 @@ WORKDIR /code
 # Copio il file requirements in /code
 COPY requirements.txt .
 
-# Dico al container di eseguire l'installazione da terminale delle librerie
+# Dico al container di eseguire l'installazione da terminale delle librerie, installo una versione di pythorch poco pesante per Git
 RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
 # Copio il file di configurazione
@@ -24,7 +24,7 @@ COPY ./models ./models
 # copio la cartella "app" dentro una cartella "app" del container.
 COPY ./app ./app
 
-#l'app comunicherà sulla porta 7860, la porta dove HF ascolta
+#l'app comunicherà sulla porta 8000
 EXPOSE 8000
 
 #lancio uvicorn e la mia app

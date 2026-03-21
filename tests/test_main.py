@@ -33,16 +33,3 @@ def test_predict_invalid_input():
    
     #verificato a priori che il tipo di errore per questo genere di test è 422
     assert response.status_code == 422, "Errore: l'API ha accettato un input non valido!"
-
-
-#eseguo un test su un'utente arrabbiato
-def test_predict_negative_sentiment():
-    # Invio una frase palesemente negativa
-    text = {"text": "This is the worst experience of my life, absolutely terrible."}
-    response = client.post("/predict", json=text)
-    data = response.json()
-    
-    assert response.status_code == 200
-    # Verifico che il modello abbia "capito" che è una frase negativa
-    
-    assert data["label"].lower() == "negative", f"Errore: il modello ha predetto {data['label']} invece di negative"

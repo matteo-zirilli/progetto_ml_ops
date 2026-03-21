@@ -48,5 +48,5 @@ with open("metrics_finetuned.json","w") as f:
 
 #RISULTATI
 #vedendo i risultati non si ottengono risultati migliori rispetto al modello baseline. Questo è dovuto probabilmente al fatto
-#che sto riaddestrando il modello su 5000 tweet mentre l'originale RoBERTa è addestrato su milioni di righe, da qui lo scarso risultato
+#che sto riaddestrando il modello su 100 tweet mentre l'originale RoBERTa è addestrato su milioni di righe, da qui lo scarso risultato
 #in effetti non è impostata una logica di append dell'informazione post riaddestramento
